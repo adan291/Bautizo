@@ -1,0 +1,6 @@
+{
+  "name": "Menú Bautizo",
+  "description": "Una aplicación para que los invitados elijan su menú para el bautizo y comuniquen sus intolerancias alimentarias.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

@@ -1,0 +1,64 @@
+{
+  "entities": {
+    "MenuSelection": {
+      "title": "MenuSelection",
+      "description": "A guest's choice of menu and their dietary observations.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The unique ID of the user."
+        },
+        "userName": {
+          "type": "string",
+          "description": "The display name of the user."
+        },
+        "userEmail": {
+          "type": "string",
+          "description": "The email of the user."
+        },
+        "selectedMenu": {
+          "type": "string",
+          "enum": ["adult_standard", "adult_vegan", "kids"],
+          "description": "The menu option chosen by the guest."
+        },
+        "observations": {
+          "type": "string",
+          "description": "Special dietary requirements or intolerances."
+        },
+        "aiMessage": {
+          "type": "string",
+          "description": "A generated message from Gemini for the user."
+        },
+        "submittedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the selection was made."
+        }
+      },
+      "required": ["userId", "selectedMenu", "submittedAt"]
+    },
+    "Admin": {
+      "title": "Admin",
+      "description": "Users with administrative privileges to view all responses.",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "The admin's email."
+        }
+      },
+      "required": ["email"]
+    }
+  },
+  "firestore": {
+    "/responses/{userId}": {
+      "schema": "MenuSelection",
+      "description": "Stores each user's single menu selection."
+    },
+    "/admins/{adminId}": {
+      "schema": "Admin",
+      "description": "List of authorized administrators."
+    }
+  }
+}

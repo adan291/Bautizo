@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Inter", ui-sans-serif, system-ui, sans-serif; /* Simplified for better readability as requested */
+}
+
+body {
+  @apply bg-[#F0F7FF] text-[#1E293B] antialiased;
+}
+
+.card-rounded {
+  @apply rounded-[24px];
+}
+
+/* Custom soft blues */
+.bg-pastel-blue { background-color: #E0F2FE; }
+.border-pastel-blue { border-color: #BAE6FD; }
+.text-deep-blue { color: #0369A1; }
+
