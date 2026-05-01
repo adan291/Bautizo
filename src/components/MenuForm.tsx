@@ -33,16 +33,7 @@ export default function MenuForm({ onSuccess, locale }: MenuFormProps) {
   const [isSuccess, setIsSuccess] = useState(false);
 
   const isFormValid = name.trim().length >= 2 && selectedPlato !== '';
-
   const menuImage = locale === 'ro' ? '/img/comidaRu.jpeg' : '/img/comida.jpeg';
-  const [name, setName] = useState('');
-  const [selectedPlato, setSelectedPlato] = useState('');
-  const [observations, setObservations] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
-  const [isSuccess, setIsSuccess] = useState(false);
-
-  const isFormValid = name.trim().length >= 2 && selectedPlato !== '';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -147,7 +138,7 @@ export default function MenuForm({ onSuccess, locale }: MenuFormProps) {
         />
       </div>
 
-      {/* Selector de plato - fuera de la imagen para mejor visibilidad */}
+      {/* Selector de plato */}
       <div className="p-6 bg-gradient-to-b from-blue-50 to-white border-b border-blue-100">
         <p className="text-center text-slate-700 font-semibold mb-4 text-lg">
           {t(locale, 'whatDishPrefer')}
