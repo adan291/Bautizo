@@ -6,7 +6,7 @@ import MenuForm from './components/MenuForm';
 import SelectionSummary from './components/SelectionSummary';
 import LanguageSelector from './components/LanguageSelector';
 import { Heart } from 'lucide-react';
-import { Locale } from './i18n';
+import { Locale, t } from './i18n';
 
 export default function App() {
   const [showMenu, setShowMenu] = useState(false);
@@ -89,21 +89,21 @@ export default function App() {
           </div>
           
           <h3 className="font-serif text-xl text-slate-700 mb-2">
-            Bautizo de Liam
+            {t(locale, 'footerTitle')}
           </h3>
           
           <p className="text-sm text-slate-500 mb-4">
-            14 de Junio de 2026 · Parroquia El Salvador
+            {t(locale, 'footerDate')}
           </p>
           
           <div className="flex items-center justify-center gap-2 text-blue-400 text-xs uppercase tracking-widest font-semibold mb-6">
             <Heart size={10} fill="currentColor" />
-            <span>Prometo no llorar... mucho</span>
+            <span>{t(locale, 'footerPromise')}</span>
             <Heart size={10} fill="currentColor" />
           </div>
           
           <p className="text-xs text-slate-400">
-            © 2026 · Hecho con amor para Liam
+            © 2026 · {t(locale, 'footerMadeWith')}
           </p>
         </div>
       </footer>

@@ -11,7 +11,7 @@ export const translations = {
     rapito: 'Rapito del Cantábrico',
     entrecot: 'Entrecot',
     yourName: 'Tu nombre',
-    namePlaceholder: 'Ej: Liam Sanchez Gojnea',
+    namePlaceholder: 'Ej: Gabriela López',
     allergies: 'Alergias o intolerancias',
     optional: '(opcional)',
     allergiesPlaceholder: 'Ej: Sin gluten, alergia al marisco...',
@@ -35,6 +35,12 @@ export const translations = {
     timeValue: '12:00',
     location: 'Lugar',
     locationValue: 'Restaurante (ver invitación)',
+    
+    // Footer
+    footerTitle: 'Bautizo de Liam',
+    footerDate: '14 de Junio de 2026 · Parroquia El Salvador',
+    footerPromise: 'Prometo no llorar... mucho',
+    footerMadeWith: 'Hecho con amor para Liam',
   },
   ro: {
     // Hero
@@ -46,7 +52,7 @@ export const translations = {
     rapito: 'Rapito del Cantábrico',
     entrecot: 'Entrecot',
     yourName: 'Numele tău',
-    namePlaceholder: 'Ex: Liam Sanchez Gojnea',
+    namePlaceholder: 'Ex: Gabriela López',
     allergies: 'Alergii sau intoleranțe',
     optional: '(opțional)',
     allergiesPlaceholder: 'Ex: Fără gluten, alergie la fructe de mare...',
@@ -70,6 +76,12 @@ export const translations = {
     timeValue: '12:00',
     location: 'Locul',
     locationValue: 'Restaurant (vezi invitația)',
+    
+    // Footer
+    footerTitle: 'Botezul lui Liam',
+    footerDate: '14 Iunie 2026 · Parroquia El Salvador',
+    footerPromise: 'Promit să nu plâng... prea mult',
+    footerMadeWith: 'Făcut cu dragoste pentru Liam',
   }
 };
 
