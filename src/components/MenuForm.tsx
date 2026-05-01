@@ -34,6 +34,16 @@ export default function MenuForm({ onSuccess, locale }: MenuFormProps) {
 
   const isFormValid = name.trim().length >= 2 && selectedPlato !== '';
 
+  const menuImage = locale === 'ro' ? '/img/comidaRu.jpeg' : '/img/comida.jpeg';
+  const [name, setName] = useState('');
+  const [selectedPlato, setSelectedPlato] = useState('');
+  const [observations, setObservations] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const isFormValid = name.trim().length >= 2 && selectedPlato !== '';
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isFormValid) return;
@@ -131,7 +141,7 @@ export default function MenuForm({ onSuccess, locale }: MenuFormProps) {
       {/* Imagen del menú */}
       <div className="relative">
         <img 
-          src="/img/comida.jpeg" 
+          src={menuImage}
           alt="Menú del Bautizo" 
           className="w-full h-auto"
         />

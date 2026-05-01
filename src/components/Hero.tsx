@@ -23,7 +23,7 @@ export default function Hero({ onConfirm, isAuthenticated, locale }: HeroProps) 
       {/* Background Image - tu invitación, ocupa toda la pantalla */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <img 
-          src="/img/inv.jpeg" 
+          src={locale === 'ro' ? '/img/invRu.jpeg' : '/img/inv.jpeg'}
           alt="Invitación Bautizo de Liam" 
           className="w-full h-full object-cover"
           loading="eager"
