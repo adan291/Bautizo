@@ -1,65 +1,43 @@
-import { User } from 'firebase/auth';
-import { loginWithGoogle, logout } from '../lib/firebase';
-import { LogIn, LogOut, Settings, User as UserIcon } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Heart } from 'lucide-react';
 
-interface NavbarProps {
-  user: User | null;
-  isAdmin: boolean;
-  onToggleAdmin: () => void;
-  showAdmin: boolean;
-}
+export default function Navbar() {
+  const [scrolled, setScrolled] = useState(false);
 
-export default function Navbar({ user, isAdmin, onToggleAdmin, showAdmin }: NavbarProps) {
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-[#f5f5f0]/80 backdrop-blur-sm border-bottom border-[#e5e5d1]">
-      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center">
-            <span className="text-white text-xs font-bold">L</span>
-          </div>
-          <span className="font-bold text-lg text-deep-blue hidden sm:block">Bautizo de Liam</span>
-        </div>
-
-        <div className="flex items-center gap-4">
-          {isAdmin && (
-            <button
-              onClick={onToggleAdmin}
-              className={`p-2 rounded-full transition-colors ${
-                showAdmin ? 'bg-[#5A5A40] text-white' : 'text-[#5A5A40] hover:bg-[#e5e5d1]'
-              }`}
-              title="Admin Panel"
-            >
-              <Settings size={20} />
-            </button>
-          )}
-
-          {user ? (
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 px-3 py-1 bg-white rounded-full border border-[#e5e5d1]">
-                {user.photoURL ? (
-                  <img src={user.photoURL} alt={user.displayName || ''} className="w-6 h-6 rounded-full" referrerPolicy="no-referrer" />
-                ) : (
-                  <UserIcon size={16} />
-                )}
-                <span className="text-sm font-sans text-gray-700 hidden md:block">{user.displayName}</span>
-              </div>
-              <button
-                onClick={logout}
-                className="text-[#5A5A40]/60 hover:text-[#5A5A40] transition-colors p-2"
-                title="Cerrar sesión"
-              >
-                <LogOut size={20} />
-              </button>
+    <nav 
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        scrolled 
+          ? 'bg-white/95 backdrop-blur-lg shadow-lg shadow-blue-100/50' 
+          : 'bg-transparent'
+      }`}
+    >
+      <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+        {/* Logo */}
+        <div className="flex items-center gap-3">
+          <div className={`relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
+            scrolled ? 'bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg' : 'bg-white/90 shadow-md'
+          }`}>
+            <span className={`text-lg font-serif font-bold transition-colors ${
+              scrolled ? 'text-white' : 'text-blue-600'
+            }`}>L</span>
+            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-yellow-300 rounded-full flex items-center justify-center shadow-sm">
+              <Heart size={8} className="text-yellow-600" fill="currentColor" />
             </div>
-          ) : (
-            <button
-              onClick={loginWithGoogle}
-              className="flex items-center gap-2 bg-[#5A5A40] text-white px-5 py-2 rounded-full hover:bg-[#4a4a35] transition-all font-sans text-sm shadow-sm"
-            >
-              <LogIn size={18} />
-              <span>Entrar</span>
-            </button>
-          )}
+          </div>
+          <div className={`hidden sm:block transition-opacity ${scrolled ? 'opacity-100' : 'opacity-0'}`}>
+            <p className="font-serif text-lg font-semibold text-slate-800">
+              Bautizo de Liam
+            </p>
+          </div>
         </div>
       </div>
     </nav>

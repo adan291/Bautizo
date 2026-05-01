@@ -1,93 +1,121 @@
 import { motion } from 'motion/react';
-import { CheckCircle2, Utensils, AlertTriangle, Calendar, Sparkles } from 'lucide-react';
+import { CheckCircle2, User, Utensils, AlertTriangle, Calendar, MapPin, Heart } from 'lucide-react';
 
 interface SelectionSummaryProps {
   selection: {
-    selectedMenu: string;
+    name: string;
+    selectedPlato: string;
+    platoName: string;
     observations: string;
-    submittedAt: any;
-    aiMessage?: string;
   };
 }
 
-const MENU_NAMES: Record<string, string> = {
-  'adult_standard': 'Menú Adulto Clásico',
-  'adult_vegan': 'Menú Adulto Vegano',
-  'kids': 'Menú Infantil'
-};
-
 export default function SelectionSummary({ selection }: SelectionSummaryProps) {
-  const dateStr = selection.submittedAt?.toDate 
-    ? selection.submittedAt.toDate().toLocaleDateString('es-ES', { 
-        day: 'numeric', 
-        month: 'long', 
-        year: 'numeric' 
-      })
-    : 'Recientemente';
+  const handleAddToCalendar = () => {
+    const event = {
+      title: 'Bautizo de Liam',
+      start: '20260614T130000',
+      end: '20260614T180000',
+      location: 'Parroquia El Salvador',
+      description: 'Ceremonia de bautizo seguida de recepción en Restaurante Marcela Brasa'
+    };
+    
+    const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${event.start}/${event.end}&location=${encodeURIComponent(event.location)}&details=${encodeURIComponent(event.description)}`;
+    
+    window.open(googleCalendarUrl, '_blank');
+  };
 
   return (
     <motion.div 
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="bg-white p-8 md:p-12 rounded-[32px] shadow-[0_10px_40px_rgba(147,197,253,0.2)] border border-blue-50 text-center relative overflow-hidden"
+      className="bg-white rounded-[32px] shadow-xl border border-blue-100 overflow-hidden"
     >
-      <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-200 via-blue-400 to-blue-200 opacity-50"></div>
-
-      <div className="flex justify-center mb-6">
-        <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center shadow-inner">
-          <CheckCircle2 size={32} className="text-blue-500" />
-        </div>
-      </div>
-
-      <h2 className="text-3xl font-serif text-deep-blue mb-2">¡Asistencia Confirmada!</h2>
-      <p className="text-gray-500 font-sans text-sm mb-8">
-        Gracias por confirmar tu participación. Hemos guardado tu preferencia de menú.
-      </p>
-
-      {selection.aiMessage && (
+      {/* Header */}
+      <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-8 text-center text-white">
         <motion.div 
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="bg-gradient-to-br from-blue-50/50 to-white p-6 rounded-2xl border border-blue-100 max-w-xl mx-auto mb-10 shadow-sm relative"
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: "spring", damping: 12, delay: 0.2 }}
+          className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg"
         >
-          <Sparkles className="absolute -top-3 -right-3 text-blue-300 w-8 h-8 opacity-50" />
-          <p className="font-serif text-lg text-blue-800 leading-relaxed italic">
-            "{selection.aiMessage}"
-          </p>
+          <CheckCircle2 size={32} className="text-green-500" />
         </motion.div>
-      )}
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-xl mx-auto mb-10">
-        <div className="p-6 bg-gray-50 rounded-2xl border border-gray-100 flex flex-col items-center">
-          <Utensils size={20} className="text-gray-400 mb-3" />
-          <span className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-1">Tu Menú</span>
-          <p className="font-bold text-deep-blue">{MENU_NAMES[selection.selectedMenu] || 'Seleccionado'}</p>
-        </div>
-
-        <div className="p-6 bg-gray-50 rounded-2xl border border-gray-100 flex flex-col items-center">
-          <Calendar size={20} className="text-gray-400 mb-3" />
-          <span className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-1">Confirmado el</span>
-          <p className="font-bold text-deep-blue">{dateStr}</p>
-        </div>
+        
+        <h2 className="text-2xl font-serif font-semibold mb-2">
+          ¡Asistencia Confirmada!
+        </h2>
+        <p className="text-blue-100">
+          Gracias, {selection.name}. ¡Te esperamos!
+        </p>
       </div>
 
-      {selection.observations && (
-        <div className="p-6 bg-orange-50/50 rounded-2xl border border-orange-100 flex flex-col items-center max-w-xl mx-auto mb-10">
-          <div className="flex items-center gap-2 mb-2 text-orange-500">
-            <AlertTriangle size={16} />
-            <span className="text-[10px] uppercase tracking-widest font-bold">Observaciones</span>
+      {/* Detalles */}
+      <div className="p-6 space-y-4">
+        {/* Tu selección */}
+        <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl">
+          <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+            <User size={20} className="text-blue-500" />
           </div>
-          <p className="font-sans text-sm text-gray-600 italic">
-            "{selection.observations}"
-          </p>
+          <div>
+            <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Invitado</p>
+            <p className="font-semibold text-slate-800">{selection.name}</p>
+          </div>
         </div>
-      )}
 
-      <p className="text-xs text-gray-400 font-sans leading-relaxed max-w-md mx-auto">
-        Si necesitas realizar algún cambio, por favor contacta directamente con los padres de Liam. 
-        ¡Estamos deseando verte allí!
-      </p>
+        <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl">
+          <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
+            <Utensils size={20} className="text-amber-500" />
+          </div>
+          <div>
+            <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Tu plato</p>
+            <p className="font-semibold text-slate-800">{selection.platoName}</p>
+          </div>
+        </div>
+
+        {selection.observations && (
+          <div className="flex items-start gap-4 p-4 bg-orange-50 rounded-2xl">
+            <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center shrink-0">
+              <AlertTriangle size={20} className="text-orange-500" />
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Observaciones</p>
+              <p className="text-slate-700 italic">"{selection.observations}"</p>
+            </div>
+          </div>
+        )}
+
+        {/* Recordatorio */}
+        <div className="p-4 bg-blue-50 rounded-2xl space-y-3">
+          <p className="text-xs text-blue-500 uppercase tracking-wider font-semibold">Recuerda</p>
+          <div className="flex items-center gap-3 text-sm text-slate-700">
+            <Calendar size={16} className="text-blue-400" />
+            <span>Domingo, 14 de Junio de 2026</span>
+          </div>
+          <div className="flex items-center gap-3 text-sm text-slate-700">
+            <MapPin size={16} className="text-blue-400" />
+            <span>Parroquia El Salvador · 13:00</span>
+          </div>
+        </div>
+
+        {/* Botón calendario */}
+        <button
+          onClick={handleAddToCalendar}
+          className="w-full py-3 rounded-full font-semibold text-sm bg-blue-50 text-blue-600 hover:bg-blue-100 transition-all flex items-center justify-center gap-2"
+        >
+          <Calendar size={18} />
+          <span>Añadir al Calendario</span>
+        </button>
+
+        {/* Footer */}
+        <div className="text-center pt-4">
+          <div className="flex items-center justify-center gap-2 text-blue-400 text-xs uppercase tracking-widest font-semibold">
+            <Heart size={10} fill="currentColor" />
+            <span>Nos vemos pronto</span>
+            <Heart size={10} fill="currentColor" />
+          </div>
+        </div>
+      </div>
     </motion.div>
   );
 }

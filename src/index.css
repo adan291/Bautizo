@@ -1,21 +1,126 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: "Inter", ui-sans-serif, system-ui, sans-serif; /* Simplified for better readability as requested */
+  --font-serif: "Playfair Display", ui-serif, Georgia, serif;
+  
+  /* Custom color palette for baptism theme */
+  --color-celestial-50: #f0f9ff;
+  --color-celestial-100: #e0f2fe;
+  --color-celestial-200: #bae6fd;
+  --color-celestial-300: #7dd3fc;
+  --color-celestial-400: #38bdf8;
+  --color-celestial-500: #0ea5e9;
+  --color-celestial-600: #0284c7;
+  --color-celestial-700: #0369a1;
+  
+  --color-gold-100: #fef9c3;
+  --color-gold-200: #fef08a;
+  --color-gold-300: #fde047;
+  --color-gold-400: #facc15;
+  --color-gold-500: #eab308;
 }
 
 body {
-  @apply bg-[#F0F7FF] text-[#1E293B] antialiased;
+  @apply bg-celestial-50 text-slate-800 antialiased;
 }
 
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-celestial-100);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-celestial-300);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-celestial-400);
+}
+
+/* Utility classes */
 .card-rounded {
-  @apply rounded-[24px];
+  @apply rounded-3xl;
 }
 
-/* Custom soft blues */
-.bg-pastel-blue { background-color: #E0F2FE; }
-.border-pastel-blue { border-color: #BAE6FD; }
-.text-deep-blue { color: #0369A1; }
+.text-deep-blue { 
+  color: var(--color-celestial-700); 
+}
+
+.bg-pastel-blue { 
+  background-color: var(--color-celestial-100); 
+}
+
+.border-pastel-blue { 
+  border-color: var(--color-celestial-200); 
+}
+
+/* Glass morphism effect */
+.glass {
+  @apply bg-white/80 backdrop-blur-md border border-white/20;
+}
+
+/* Elegant text shadow for headings */
+.text-shadow-soft {
+  text-shadow: 0 2px 10px rgba(3, 105, 161, 0.1);
+}
+
+/* Gradient text */
+.gradient-text {
+  @apply bg-gradient-to-r from-celestial-600 via-celestial-500 to-celestial-400 bg-clip-text text-transparent;
+}
+
+/* Focus styles for accessibility */
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  @apply outline-none ring-2 ring-celestial-400 ring-offset-2;
+}
+
+/* Animation utilities */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  html {
+    scroll-behavior: auto;
+  }
+}
 
