@@ -2,27 +2,29 @@ import { useState } from 'react';
 import { motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { Check, Loader2, AlertCircle, User } from 'lucide-react';
+import { Locale, t } from '../i18n';
 
 interface MenuFormProps {
   onSuccess: (selection: any) => void;
+  locale: Locale;
 }
 
 const PLATO_OPTIONS = [
   {
     id: 'rapito',
-    name: 'Rapito del Cantábrico',
+    nameKey: 'rapito' as const,
     emoji: '🐟',
     color: 'bg-blue-500',
   },
   {
     id: 'entrecot',
-    name: 'Entrecot',
+    nameKey: 'entrecot' as const,
     emoji: '🥩',
     color: 'bg-amber-500',
   }
 ];
 
-export default function MenuForm({ onSuccess }: MenuFormProps) {
+export default function MenuForm({ onSuccess, locale }: MenuFormProps) {
   const [name, setName] = useState('');
   const [selectedPlato, setSelectedPlato] = useState('');
   const [observations, setObservations] = useState('');
@@ -43,7 +45,7 @@ export default function MenuForm({ onSuccess }: MenuFormProps) {
       const data = {
         name: name.trim(),
         selectedPlato,
-        platoName: PLATO_OPTIONS.find(o => o.id === selectedPlato)?.name || selectedPlato,
+        platoName: t(locale, PLATO_OPTIONS.find(o => o.id === selectedPlato)?.nameKey || 'rapito'),
         observations,
         submittedAt: new Date().toISOString()
       };
@@ -111,10 +113,10 @@ export default function MenuForm({ onSuccess }: MenuFormProps) {
         </motion.div>
         
         <h3 className="text-2xl font-serif font-semibold text-slate-800 mb-2">
-          ¡Gracias, {name}!
+          {t(locale, 'thankYou')} {name}!
         </h3>
         <p className="text-slate-500 text-center">
-          Tu selección ha sido guardada. ¡Te esperamos!
+          {t(locale, 'selectionSaved')}
         </p>
       </motion.div>
     );
@@ -138,7 +140,7 @@ export default function MenuForm({ onSuccess }: MenuFormProps) {
       {/* Selector de plato - fuera de la imagen para mejor visibilidad */}
       <div className="p-6 bg-gradient-to-b from-blue-50 to-white border-b border-blue-100">
         <p className="text-center text-slate-700 font-semibold mb-4 text-lg">
-          🍽️ ¿Qué plato prefieres?
+          {t(locale, 'whatDishPrefer')}
         </p>
         <div className="grid grid-cols-2 gap-4">
           {PLATO_OPTIONS.map((option) => (
@@ -153,7 +155,7 @@ export default function MenuForm({ onSuccess }: MenuFormProps) {
               }`}
             >
               <span className="text-4xl">{option.emoji}</span>
-              <span className="text-center leading-tight">{option.name}</span>
+              <span className="text-center leading-tight">{t(locale, option.nameKey)}</span>
               {selectedPlato === option.id && (
                 <div className="absolute -top-2 -right-2 w-7 h-7 bg-green-500 rounded-full flex items-center justify-center shadow-md">
                   <Check size={16} className="text-white" />
@@ -169,7 +171,7 @@ export default function MenuForm({ onSuccess }: MenuFormProps) {
         {errorMsg && (
           <div className="p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
             <AlertCircle className="text-red-500 shrink-0 mt-0.5" size={20} />
-            <p className="text-sm font-medium text-red-800">{errorMsg}</p>
+            <p className="text-sm font-medium text-red-800">{t(locale, 'errorMessage')}</p>
           </div>
         )}
 
@@ -177,14 +179,14 @@ export default function MenuForm({ onSuccess }: MenuFormProps) {
         <div className="space-y-2">
           <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
             <User size={16} className="text-blue-500" />
-            <span>Tu nombre</span>
+            <span>{t(locale, 'yourName')}</span>
             <span className="text-red-400">*</span>
           </label>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Ej: Gabriela López"
+            placeholder={t(locale, 'namePlaceholder')}
             required
             className="w-full p-4 rounded-xl border-2 border-gray-100 focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all text-sm"
           />
@@ -193,12 +195,12 @@ export default function MenuForm({ onSuccess }: MenuFormProps) {
         {/* Observaciones */}
         <div className="space-y-2">
           <label className="text-sm font-semibold text-slate-700">
-            Alergias o intolerancias <span className="text-gray-400 font-normal">(opcional)</span>
+            {t(locale, 'allergies')} <span className="text-gray-400 font-normal">{t(locale, 'optional')}</span>
           </label>
           <textarea
             value={observations}
             onChange={(e) => setObservations(e.target.value)}
-            placeholder="Ej: Sin gluten, alergia al marisco..."
+            placeholder={t(locale, 'allergiesPlaceholder')}
             className="w-full h-20 p-4 rounded-xl border-2 border-gray-100 focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all text-sm resize-none"
           />
         </div>
@@ -216,12 +218,12 @@ export default function MenuForm({ onSuccess }: MenuFormProps) {
           {submitting ? (
             <>
               <Loader2 size={20} style={{ animation: 'spin 1s linear infinite' }} />
-              <span>Enviando...</span>
+              <span>{t(locale, 'sending')}</span>
             </>
           ) : (
             <>
               <Check size={20} />
-              <span>Confirmar Asistencia</span>
+              <span>{t(locale, 'confirmButton')}</span>
             </>
           )}
         </button>

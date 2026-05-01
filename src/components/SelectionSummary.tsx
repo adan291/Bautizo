@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
 import { CheckCircle2, User, Utensils, AlertTriangle, Calendar, MapPin, Heart } from 'lucide-react';
+import { Locale, t } from '../i18n';
 
 interface SelectionSummaryProps {
   selection: {
@@ -8,9 +9,10 @@ interface SelectionSummaryProps {
     platoName: string;
     observations: string;
   };
+  locale: Locale;
 }
 
-export default function SelectionSummary({ selection }: SelectionSummaryProps) {
+export default function SelectionSummary({ selection, locale }: SelectionSummaryProps) {
   const handleAddToCalendar = () => {
     const event = {
       title: 'Bautizo de Liam',
@@ -24,6 +26,37 @@ export default function SelectionSummary({ selection }: SelectionSummaryProps) {
     
     window.open(googleCalendarUrl, '_blank');
   };
+
+  const summaryTexts = {
+    es: {
+      confirmed: '¡Asistencia Confirmada!',
+      thanks: 'Gracias,',
+      waiting: '¡Te esperamos!',
+      guest: 'Invitado',
+      yourDish: 'Tu plato',
+      observations: 'Observaciones',
+      remember: 'Recuerda',
+      date: 'Domingo, 14 de Junio de 2026',
+      location: 'Parroquia El Salvador · 13:00',
+      addCalendar: 'Añadir al Calendario',
+      seeYou: 'Nos vemos pronto'
+    },
+    ro: {
+      confirmed: 'Participare Confirmată!',
+      thanks: 'Mulțumim,',
+      waiting: 'Te așteptăm!',
+      guest: 'Invitat',
+      yourDish: 'Felul tău',
+      observations: 'Observații',
+      remember: 'Nu uita',
+      date: 'Duminică, 14 Iunie 2026',
+      location: 'Parroquia El Salvador · 13:00',
+      addCalendar: 'Adaugă în Calendar',
+      seeYou: 'Ne vedem curând'
+    }
+  };
+
+  const txt = summaryTexts[locale];
 
   return (
     <motion.div 
@@ -43,10 +76,10 @@ export default function SelectionSummary({ selection }: SelectionSummaryProps) {
         </motion.div>
         
         <h2 className="text-2xl font-serif font-semibold mb-2">
-          ¡Asistencia Confirmada!
+          {txt.confirmed}
         </h2>
         <p className="text-blue-100">
-          Gracias, {selection.name}. ¡Te esperamos!
+          {txt.thanks} {selection.name}. {txt.waiting}
         </p>
       </div>
 
@@ -58,7 +91,7 @@ export default function SelectionSummary({ selection }: SelectionSummaryProps) {
             <User size={20} className="text-blue-500" />
           </div>
           <div>
-            <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Invitado</p>
+            <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">{txt.guest}</p>
             <p className="font-semibold text-slate-800">{selection.name}</p>
           </div>
         </div>
@@ -68,7 +101,7 @@ export default function SelectionSummary({ selection }: SelectionSummaryProps) {
             <Utensils size={20} className="text-amber-500" />
           </div>
           <div>
-            <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Tu plato</p>
+            <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">{txt.yourDish}</p>
             <p className="font-semibold text-slate-800">{selection.platoName}</p>
           </div>
         </div>
@@ -79,7 +112,7 @@ export default function SelectionSummary({ selection }: SelectionSummaryProps) {
               <AlertTriangle size={20} className="text-orange-500" />
             </div>
             <div>
-              <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Observaciones</p>
+              <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">{txt.observations}</p>
               <p className="text-slate-700 italic">"{selection.observations}"</p>
             </div>
           </div>
@@ -87,14 +120,14 @@ export default function SelectionSummary({ selection }: SelectionSummaryProps) {
 
         {/* Recordatorio */}
         <div className="p-4 bg-blue-50 rounded-2xl space-y-3">
-          <p className="text-xs text-blue-500 uppercase tracking-wider font-semibold">Recuerda</p>
+          <p className="text-xs text-blue-500 uppercase tracking-wider font-semibold">{txt.remember}</p>
           <div className="flex items-center gap-3 text-sm text-slate-700">
             <Calendar size={16} className="text-blue-400" />
-            <span>Domingo, 14 de Junio de 2026</span>
+            <span>{txt.date}</span>
           </div>
           <div className="flex items-center gap-3 text-sm text-slate-700">
             <MapPin size={16} className="text-blue-400" />
-            <span>Parroquia El Salvador · 13:00</span>
+            <span>{txt.location}</span>
           </div>
         </div>
 
@@ -104,14 +137,14 @@ export default function SelectionSummary({ selection }: SelectionSummaryProps) {
           className="w-full py-3 rounded-full font-semibold text-sm bg-blue-50 text-blue-600 hover:bg-blue-100 transition-all flex items-center justify-center gap-2"
         >
           <Calendar size={18} />
-          <span>Añadir al Calendario</span>
+          <span>{txt.addCalendar}</span>
         </button>
 
         {/* Footer */}
         <div className="text-center pt-4">
           <div className="flex items-center justify-center gap-2 text-blue-400 text-xs uppercase tracking-widest font-semibold">
             <Heart size={10} fill="currentColor" />
-            <span>Nos vemos pronto</span>
+            <span>{txt.seeYou}</span>
             <Heart size={10} fill="currentColor" />
           </div>
         </div>

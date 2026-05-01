@@ -1,13 +1,15 @@
-import { useRef, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
 import Scene from './Scene';
+import { Locale, t } from '../i18n';
 
 interface HeroProps {
   onConfirm: () => void;
   isAuthenticated: boolean;
+  locale: Locale;
 }
 
-export default function Hero({ onConfirm, isAuthenticated }: HeroProps) {
+export default function Hero({ onConfirm, isAuthenticated, locale }: HeroProps) {
   const [showScene, setShowScene] = useState(false);
 
   // Lazy load 3D scene for better performance
@@ -46,12 +48,12 @@ export default function Hero({ onConfirm, isAuthenticated }: HeroProps) {
             <span className="flex items-center justify-center gap-2">
               {isAuthenticated ? (
                 <>
-                  <span>✓ ¡Genial! Baja para elegir tu menú</span>
+                  <span>{t(locale, 'alreadyConfirmed')}</span>
                   <ChevronDown size={20} className="animate-bounce" />
                 </>
               ) : (
                 <>
-                  <span>🎉 Confirmar Asistencia</span>
+                  <span>{t(locale, 'confirmAttendance')}</span>
                   <ChevronDown size={20} className="group-hover:translate-y-1 transition-transform" />
                 </>
               )}

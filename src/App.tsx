@@ -4,11 +4,14 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import MenuForm from './components/MenuForm';
 import SelectionSummary from './components/SelectionSummary';
+import LanguageSelector from './components/LanguageSelector';
 import { Heart } from 'lucide-react';
+import { Locale } from './i18n';
 
 export default function App() {
   const [showMenu, setShowMenu] = useState(false);
   const [submittedSelection, setSubmittedSelection] = useState<any>(null);
+  const [locale, setLocale] = useState<Locale>('es');
   const menuSectionRef = useRef<HTMLDivElement>(null);
 
   const handleConfirmAttendance = () => {
@@ -35,12 +38,14 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-celestial-50 font-sans">
+      <LanguageSelector locale={locale} onChange={setLocale} />
       <Navbar />
       
       <main className="pb-16 md:pb-24">
         <Hero 
           onConfirm={handleConfirmAttendance} 
-          isAuthenticated={showMenu} 
+          isAuthenticated={showMenu}
+          locale={locale}
         />
         
         {/* Menu Section */}
@@ -58,9 +63,9 @@ export default function App() {
                 transition={{ duration: 0.5, ease: "easeOut" }}
               >
                 {submittedSelection ? (
-                  <SelectionSummary selection={submittedSelection} />
+                  <SelectionSummary selection={submittedSelection} locale={locale} />
                 ) : (
-                  <MenuForm onSuccess={handleSuccess} />
+                  <MenuForm onSuccess={handleSuccess} locale={locale} />
                 )}
               </motion.div>
             )}
