@@ -48,8 +48,8 @@ export const translations = {
     
     // MenuForm
     whatDishPrefer: '🍽️ Ce fel de mâncare preferi?',
-    rapito: 'Rapito del Cantábrico',
-    entrecot: 'Entrecot',
+    rapito: 'Pește Rapito din Cantabria',
+    entrecot: 'Antricot',
     yourName: 'Numele tău',
     namePlaceholder: 'Ex: Gabriela López',
     allergies: 'Alergii sau intoleranțe',
