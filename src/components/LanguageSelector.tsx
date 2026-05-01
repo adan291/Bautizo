@@ -7,10 +7,13 @@ interface LanguageSelectorProps {
 
 export default function LanguageSelector({ locale, onChange }: LanguageSelectorProps) {
   return (
-    <div className="fixed top-4 right-4 z-[9999]">
-      <div className="flex bg-white/95 backdrop-blur-sm rounded-full shadow-lg border border-blue-200 p-1 gap-1">
+    <nav className="fixed top-4 right-4 z-[9999]" aria-label="Selector de idioma">
+      <div className="flex bg-white/95 backdrop-blur-sm rounded-full shadow-lg border border-blue-200 p-1 gap-1" role="radiogroup" aria-label="Idioma">
         <button
           type="button"
+          role="radio"
+          aria-checked={locale === 'es'}
+          aria-label="Español"
           onClick={() => onChange('es')}
           className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${
             locale === 'es'
@@ -22,6 +25,9 @@ export default function LanguageSelector({ locale, onChange }: LanguageSelectorP
         </button>
         <button
           type="button"
+          role="radio"
+          aria-checked={locale === 'ro'}
+          aria-label="Română"
           onClick={() => onChange('ro')}
           className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${
             locale === 'ro'
@@ -32,6 +38,6 @@ export default function LanguageSelector({ locale, onChange }: LanguageSelectorP
           RO
         </button>
       </div>
-    </div>
+    </nav>
   );
 }

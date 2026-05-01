@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { CheckCircle2, User, Utensils, AlertTriangle, Calendar, MapPin, Heart } from 'lucide-react';
+import { CheckCircle2, User, Utensils, AlertTriangle, Calendar, MapPin, Heart, RotateCcw } from 'lucide-react';
 import { Locale, t } from '../i18n';
 
 interface SelectionSummaryProps {
@@ -10,9 +10,10 @@ interface SelectionSummaryProps {
     observations: string;
   };
   locale: Locale;
+  onReset?: () => void;
 }
 
-export default function SelectionSummary({ selection, locale }: SelectionSummaryProps) {
+export default function SelectionSummary({ selection, locale, onReset }: SelectionSummaryProps) {
   const handleAddToCalendar = () => {
     const event = {
       title: 'Bautizo de Liam',
@@ -24,45 +25,16 @@ export default function SelectionSummary({ selection, locale }: SelectionSummary
     
     const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${event.start}/${event.end}&location=${encodeURIComponent(event.location)}&details=${encodeURIComponent(event.description)}`;
     
-    window.open(googleCalendarUrl, '_blank');
+    window.open(googleCalendarUrl, '_blank', 'noopener,noreferrer');
   };
-
-  const summaryTexts = {
-    es: {
-      confirmed: '¡Asistencia Confirmada!',
-      thanks: 'Gracias,',
-      waiting: '¡Te esperamos!',
-      guest: 'Invitado',
-      yourDish: 'Tu plato',
-      observations: 'Observaciones',
-      remember: 'Recuerda',
-      date: 'Domingo, 14 de Junio de 2026',
-      location: 'Parroquia El Salvador · 13:00',
-      addCalendar: 'Añadir al Calendario',
-      seeYou: 'Nos vemos pronto'
-    },
-    ro: {
-      confirmed: 'Participare Confirmată!',
-      thanks: 'Mulțumim,',
-      waiting: 'Te așteptăm!',
-      guest: 'Invitat',
-      yourDish: 'Felul tău',
-      observations: 'Observații',
-      remember: 'Nu uita',
-      date: 'Duminică, 14 Iunie 2026',
-      location: 'Parroquia El Salvador · 13:00',
-      addCalendar: 'Adaugă în Calendar',
-      seeYou: 'Ne vedem curând'
-    }
-  };
-
-  const txt = summaryTexts[locale];
 
   return (
     <motion.div 
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       className="bg-white rounded-[32px] shadow-xl border border-blue-100 overflow-hidden"
+      role="region"
+      aria-label={t(locale, 'summaryConfirmed')}
     >
       {/* Header */}
       <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-8 text-center text-white">
@@ -72,36 +44,35 @@ export default function SelectionSummary({ selection, locale }: SelectionSummary
           transition={{ type: "spring", damping: 12, delay: 0.2 }}
           className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg"
         >
-          <CheckCircle2 size={32} className="text-green-500" />
+          <CheckCircle2 size={32} className="text-green-500" aria-hidden="true" />
         </motion.div>
         
         <h2 className="text-2xl font-serif font-semibold mb-2">
-          {txt.confirmed}
+          {t(locale, 'summaryConfirmed')}
         </h2>
         <p className="text-blue-100">
-          {txt.thanks} {selection.name}. {txt.waiting}
+          {t(locale, 'summaryThanks')} {selection.name}. {t(locale, 'summaryWaiting')}
         </p>
       </div>
 
       {/* Detalles */}
       <div className="p-6 space-y-4">
-        {/* Tu selección */}
         <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl">
           <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-            <User size={20} className="text-blue-500" />
+            <User size={20} className="text-blue-500" aria-hidden="true" />
           </div>
           <div>
-            <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">{txt.guest}</p>
+            <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">{t(locale, 'summaryGuest')}</p>
             <p className="font-semibold text-slate-800">{selection.name}</p>
           </div>
         </div>
 
         <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl">
           <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
-            <Utensils size={20} className="text-amber-500" />
+            <Utensils size={20} className="text-amber-500" aria-hidden="true" />
           </div>
           <div>
-            <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">{txt.yourDish}</p>
+            <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">{t(locale, 'summaryYourDish')}</p>
             <p className="font-semibold text-slate-800">{selection.platoName}</p>
           </div>
         </div>
@@ -109,10 +80,10 @@ export default function SelectionSummary({ selection, locale }: SelectionSummary
         {selection.observations && (
           <div className="flex items-start gap-4 p-4 bg-orange-50 rounded-2xl">
             <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center shrink-0">
-              <AlertTriangle size={20} className="text-orange-500" />
+              <AlertTriangle size={20} className="text-orange-500" aria-hidden="true" />
             </div>
             <div>
-              <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">{txt.observations}</p>
+              <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">{t(locale, 'summaryObservations')}</p>
               <p className="text-slate-700 italic">"{selection.observations}"</p>
             </div>
           </div>
@@ -120,14 +91,14 @@ export default function SelectionSummary({ selection, locale }: SelectionSummary
 
         {/* Recordatorio */}
         <div className="p-4 bg-blue-50 rounded-2xl space-y-3">
-          <p className="text-xs text-blue-500 uppercase tracking-wider font-semibold">{txt.remember}</p>
+          <p className="text-xs text-blue-500 uppercase tracking-wider font-semibold">{t(locale, 'summaryRemember')}</p>
           <div className="flex items-center gap-3 text-sm text-slate-700">
-            <Calendar size={16} className="text-blue-400" />
-            <span>{txt.date}</span>
+            <Calendar size={16} className="text-blue-400" aria-hidden="true" />
+            <span>{t(locale, 'summaryDate')}</span>
           </div>
           <div className="flex items-center gap-3 text-sm text-slate-700">
-            <MapPin size={16} className="text-blue-400" />
-            <span>{txt.location}</span>
+            <MapPin size={16} className="text-blue-400" aria-hidden="true" />
+            <span>{t(locale, 'summaryLocation')}</span>
           </div>
         </div>
 
@@ -136,16 +107,27 @@ export default function SelectionSummary({ selection, locale }: SelectionSummary
           onClick={handleAddToCalendar}
           className="w-full py-3 rounded-full font-semibold text-sm bg-blue-50 text-blue-600 hover:bg-blue-100 transition-all flex items-center justify-center gap-2"
         >
-          <Calendar size={18} />
-          <span>{txt.addCalendar}</span>
+          <Calendar size={18} aria-hidden="true" />
+          <span>{t(locale, 'summaryAddCalendar')}</span>
         </button>
+
+        {/* Botón cambiar selección */}
+        {onReset && (
+          <button
+            onClick={onReset}
+            className="w-full py-3 rounded-full font-semibold text-sm bg-gray-50 text-gray-600 hover:bg-gray-100 transition-all flex items-center justify-center gap-2"
+          >
+            <RotateCcw size={16} aria-hidden="true" />
+            <span>{t(locale, 'summaryChangeSelection')}</span>
+          </button>
+        )}
 
         {/* Footer */}
         <div className="text-center pt-4">
           <div className="flex items-center justify-center gap-2 text-blue-400 text-xs uppercase tracking-widest font-semibold">
-            <Heart size={10} fill="currentColor" />
-            <span>{txt.seeYou}</span>
-            <Heart size={10} fill="currentColor" />
+            <Heart size={10} fill="currentColor" aria-hidden="true" />
+            <span>{t(locale, 'summarySeeYou')}</span>
+            <Heart size={10} fill="currentColor" aria-hidden="true" />
           </div>
         </div>
       </div>

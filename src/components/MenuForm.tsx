@@ -35,7 +35,7 @@ export default function MenuForm({ onSuccess, locale }: MenuFormProps) {
   const isFormValid = name.trim().length >= 2 && selectedPlato !== '';
   const menuImage = locale === 'ro' ? '/img/comidaRu.jpeg' : '/img/comida.jpeg';
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!isFormValid) return;
 
@@ -58,8 +58,6 @@ export default function MenuForm({ onSuccess, locale }: MenuFormProps) {
 
       // Enviar a Google Sheets (si está configurado)
       const GOOGLE_SCRIPT_URL = import.meta.env.VITE_GOOGLE_SCRIPT_URL;
-      console.log('URL Google Script:', GOOGLE_SCRIPT_URL);
-      console.log('Datos a enviar:', data);
       
       if (GOOGLE_SCRIPT_URL) {
         try {
@@ -69,12 +67,9 @@ export default function MenuForm({ onSuccess, locale }: MenuFormProps) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
           });
-          console.log('Enviado a Google Sheets');
         } catch (err) {
           console.error('Error enviando a Google Sheets:', err);
         }
-      } else {
-        console.log('No hay URL de Google Script configurada');
       }
 
       setIsSuccess(true);
@@ -91,7 +86,7 @@ export default function MenuForm({ onSuccess, locale }: MenuFormProps) {
 
     } catch (error: any) {
       console.error(error);
-      setErrorMsg("Hubo un problema al enviar. Por favor, inténtalo de nuevo.");
+      setErrorMsg(t(locale, 'errorMessage'));
     } finally {
       setSubmitting(false);
     }
@@ -103,6 +98,8 @@ export default function MenuForm({ onSuccess, locale }: MenuFormProps) {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         className="bg-white p-12 rounded-[32px] shadow-xl border border-blue-100 flex flex-col items-center justify-center min-h-[300px]"
+        role="status"
+        aria-live="polite"
       >
         <motion.div 
           initial={{ scale: 0 }}
@@ -110,7 +107,7 @@ export default function MenuForm({ onSuccess, locale }: MenuFormProps) {
           transition={{ type: "spring", damping: 12 }}
           className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mb-6 shadow-lg"
         >
-          <Check size={40} className="text-white" strokeWidth={3} />
+          <Check size={40} className="text-white" strokeWidth={3} aria-hidden="true" />
         </motion.div>
         
         <h3 className="text-2xl font-serif font-semibold text-slate-800 mb-2">
@@ -133,21 +130,25 @@ export default function MenuForm({ onSuccess, locale }: MenuFormProps) {
       <div className="relative">
         <img 
           src={menuImage}
-          alt="Menú del Bautizo" 
+          alt={locale === 'ro' ? 'Meniul Botezului' : 'Menú del Bautizo'}
           className="w-full h-auto"
+          loading="lazy"
         />
       </div>
 
       {/* Selector de plato */}
       <div className="p-6 bg-gradient-to-b from-blue-50 to-white border-b border-blue-100">
-        <p className="text-center text-slate-700 font-semibold mb-4 text-lg">
+        <p className="text-center text-slate-700 font-semibold mb-4 text-lg" id="dish-selection-label">
           {t(locale, 'whatDishPrefer')}
         </p>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4" role="radiogroup" aria-labelledby="dish-selection-label">
           {PLATO_OPTIONS.map((option) => (
             <button
               key={option.id}
               type="button"
+              role="radio"
+              aria-checked={selectedPlato === option.id}
+              aria-label={t(locale, option.nameKey)}
               onClick={() => setSelectedPlato(option.id)}
               className={`relative py-5 px-4 rounded-2xl font-bold text-base transition-all flex flex-col items-center justify-center gap-2 border-3 ${
                 selectedPlato === option.id
@@ -155,11 +156,11 @@ export default function MenuForm({ onSuccess, locale }: MenuFormProps) {
                   : 'bg-white text-slate-700 hover:bg-gray-50 border-gray-200 hover:border-blue-300'
               }`}
             >
-              <span className="text-4xl">{option.emoji}</span>
+              <span className="text-4xl" aria-hidden="true">{option.emoji}</span>
               <span className="text-center leading-tight">{t(locale, option.nameKey)}</span>
               {selectedPlato === option.id && (
                 <div className="absolute -top-2 -right-2 w-7 h-7 bg-green-500 rounded-full flex items-center justify-center shadow-md">
-                  <Check size={16} className="text-white" />
+                  <Check size={16} className="text-white" aria-hidden="true" />
                 </div>
               )}
             </button>
@@ -168,37 +169,41 @@ export default function MenuForm({ onSuccess, locale }: MenuFormProps) {
       </div>
 
       {/* Formulario */}
-      <form onSubmit={handleSubmit} className="p-6 space-y-5">
+      <form onSubmit={handleSubmit} className="p-6 space-y-5" noValidate>
         {errorMsg && (
-          <div className="p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
-            <AlertCircle className="text-red-500 shrink-0 mt-0.5" size={20} />
-            <p className="text-sm font-medium text-red-800">{t(locale, 'errorMessage')}</p>
+          <div className="p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3" role="alert">
+            <AlertCircle className="text-red-500 shrink-0 mt-0.5" size={20} aria-hidden="true" />
+            <p className="text-sm font-medium text-red-800">{errorMsg}</p>
           </div>
         )}
 
         {/* Nombre */}
         <div className="space-y-2">
-          <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
-            <User size={16} className="text-blue-500" />
+          <label htmlFor="guest-name" className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+            <User size={16} className="text-blue-500" aria-hidden="true" />
             <span>{t(locale, 'yourName')}</span>
-            <span className="text-red-400">*</span>
+            <span className="text-red-400" aria-hidden="true">*</span>
           </label>
           <input
+            id="guest-name"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder={t(locale, 'namePlaceholder')}
             required
+            aria-required="true"
+            autoComplete="name"
             className="w-full p-4 rounded-xl border-2 border-gray-100 focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all text-sm"
           />
         </div>
 
         {/* Observaciones */}
         <div className="space-y-2">
-          <label className="text-sm font-semibold text-slate-700">
+          <label htmlFor="guest-allergies" className="text-sm font-semibold text-slate-700">
             {t(locale, 'allergies')} <span className="text-gray-400 font-normal">{t(locale, 'optional')}</span>
           </label>
           <textarea
+            id="guest-allergies"
             value={observations}
             onChange={(e) => setObservations(e.target.value)}
             placeholder={t(locale, 'allergiesPlaceholder')}
@@ -210,6 +215,7 @@ export default function MenuForm({ onSuccess, locale }: MenuFormProps) {
         <button
           type="submit"
           disabled={!isFormValid || submitting}
+          aria-disabled={!isFormValid || submitting}
           className={`w-full py-4 rounded-full font-bold text-base transition-all flex items-center justify-center gap-2 ${
             !isFormValid || submitting
               ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
@@ -218,12 +224,12 @@ export default function MenuForm({ onSuccess, locale }: MenuFormProps) {
         >
           {submitting ? (
             <>
-              <Loader2 size={20} style={{ animation: 'spin 1s linear infinite' }} />
+              <Loader2 size={20} className="animate-spin" aria-hidden="true" />
               <span>{t(locale, 'sending')}</span>
             </>
           ) : (
             <>
-              <Check size={20} />
+              <Check size={20} aria-hidden="true" />
               <span>{t(locale, 'confirmButton')}</span>
             </>
           )}

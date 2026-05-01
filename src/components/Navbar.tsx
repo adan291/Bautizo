@@ -8,12 +8,13 @@ export default function Navbar() {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
     <nav 
+      aria-label="Navegación principal"
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled 
           ? 'bg-white/95 backdrop-blur-lg shadow-lg shadow-blue-100/50' 
@@ -28,9 +29,9 @@ export default function Navbar() {
           }`}>
             <span className={`text-lg font-serif font-bold transition-colors ${
               scrolled ? 'text-white' : 'text-blue-600'
-            }`}>L</span>
+            }`} aria-hidden="true">L</span>
             <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-yellow-300 rounded-full flex items-center justify-center shadow-sm">
-              <Heart size={8} className="text-yellow-600" fill="currentColor" />
+              <Heart size={8} className="text-yellow-600" fill="currentColor" aria-hidden="true" />
             </div>
           </div>
           <div className={`hidden sm:block transition-opacity ${scrolled ? 'opacity-100' : 'opacity-0'}`}>

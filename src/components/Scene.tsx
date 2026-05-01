@@ -3,6 +3,11 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { Sparkles, Float, Sphere, MeshDistortMaterial, Cloud } from '@react-three/drei';
 import * as THREE from 'three';
 
+// Detect mobile for performance scaling
+const isMobile = typeof window !== 'undefined' && (
+  window.innerWidth < 768 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
+);
+
 // Optimized Balloon component
 function Balloon({ position, color, size = 1, speed = 1 }: { position: [number, number, number], color: string, size?: number, speed?: number }) {
   const groupRef = useRef<THREE.Group>(null);
@@ -13,14 +18,13 @@ function Balloon({ position, color, size = 1, speed = 1 }: { position: [number, 
       points.push(new THREE.Vector3(0, -i * 0.25 * size, Math.sin(i * 0.5) * 0.08));
     }
     const curve = new THREE.CatmullRomCurve3(points);
-    return new THREE.TubeGeometry(curve, 12, 0.015, 6, false);
+    return new THREE.TubeGeometry(curve, 8, 0.015, 4, false);
   }, [size]);
 
   return (
     <Float speed={speed} rotationIntensity={0.4} floatIntensity={1.5}>
       <group ref={groupRef} position={position}>
-        {/* Balloon */}
-        <Sphere args={[size, 24, 24]} position={[0, size * 0.3, 0]}>
+        <Sphere args={[size, isMobile ? 16 : 24, isMobile ? 16 : 24]} position={[0, size * 0.3, 0]}>
           <MeshDistortMaterial 
             color={color} 
             distort={0.12} 
@@ -31,12 +35,10 @@ function Balloon({ position, color, size = 1, speed = 1 }: { position: [number, 
             opacity={0.6}
           />
         </Sphere>
-        {/* Knot */}
         <mesh position={[0, -size * 0.1, 0]}>
           <coneGeometry args={[size * 0.12, size * 0.25, 6]} />
           <meshStandardMaterial color={color} />
         </mesh>
-        {/* Rope */}
         <mesh geometry={ropeGeometry}>
           <meshStandardMaterial color="#d4d4d4" />
         </mesh>
@@ -45,29 +47,36 @@ function Balloon({ position, color, size = 1, speed = 1 }: { position: [number, 
   );
 }
 
-// Balloon cluster with fewer balloons for performance
+// Balloon cluster — fewer on mobile
 function BalloonCluster() {
   const colors = ['#93c5fd', '#bfdbfe', '#dbeafe', '#ffffff', '#e0f2fe'];
   
+  if (isMobile) {
+    return (
+      <>
+        <Balloon position={[-4, 2, -8]} color={colors[0]} size={1.1} speed={1.2} />
+        <Balloon position={[4, 1, -9]} color={colors[2]} size={1.1} speed={1.0} />
+        <Balloon position={[0, 4, -12]} color={colors[1]} size={1.2} speed={0.7} />
+      </>
+    );
+  }
+
   return (
     <>
-      {/* Left side */}
       <Balloon position={[-4.5, 2.5, -7]} color={colors[0]} size={1.1} speed={1.3} />
       <Balloon position={[-5.5, 0, -9]} color={colors[1]} size={0.9} speed={1.8} />
-      
-      {/* Right side */}
       <Balloon position={[4.5, 1.5, -8]} color={colors[2]} size={1.2} speed={1.1} />
       <Balloon position={[5.5, -0.5, -10]} color={colors[4]} size={0.85} speed={1.9} />
-      
-      {/* Background */}
       <Balloon position={[-1.5, 4, -12]} color={colors[1]} size={1.3} speed={0.7} />
       <Balloon position={[2, -2, -11]} color={colors[0]} size={1.1} speed={0.9} />
     </>
   );
 }
 
-// Simplified clouds - more transparent
+// Clouds — skip on mobile
 function Clouds() {
+  if (isMobile) return null;
+  
   return (
     <>
       <Cloud position={[-7, 4, -14]} speed={0.15} opacity={0.15} scale={[8, 1.5, 1.5]} segments={15} color="#ffffff" />
@@ -76,9 +85,9 @@ function Clouds() {
   );
 }
 
-// Optimized confetti with fewer particles
+// Optimized confetti — reuse objects outside useFrame
 function Confetti() {
-  const count = 30;
+  const count = isMobile ? 15 : 30;
   const meshRef = useRef<THREE.InstancedMesh>(null);
   
   const { particles, colors } = useMemo(() => {
@@ -100,17 +109,19 @@ function Confetti() {
       colorData.push(colorOptions[Math.floor(Math.random() * colorOptions.length)]);
     }
     return { particles: particleData, colors: colorData };
-  }, []);
+  }, [count]);
+
+  // Reuse objects to avoid GC pressure
+  const matrix = useMemo(() => new THREE.Matrix4(), []);
+  const position = useMemo(() => new THREE.Vector3(), []);
+  const quaternion = useMemo(() => new THREE.Quaternion(), []);
+  const scale = useMemo(() => new THREE.Vector3(0.08, 0.08, 0.01), []);
+  const euler = useMemo(() => new THREE.Euler(), []);
+  const colorObj = useMemo(() => new THREE.Color(), []);
 
   useFrame((state) => {
     if (!meshRef.current) return;
     const time = state.clock.elapsedTime;
-    
-    const matrix = new THREE.Matrix4();
-    const position = new THREE.Vector3();
-    const quaternion = new THREE.Quaternion();
-    const scale = new THREE.Vector3(0.08, 0.08, 0.01);
-    const euler = new THREE.Euler();
     
     particles.forEach((particle, i) => {
       position.set(
@@ -126,7 +137,7 @@ function Confetti() {
       quaternion.setFromEuler(euler);
       matrix.compose(position, quaternion, scale);
       meshRef.current!.setMatrixAt(i, matrix);
-      meshRef.current!.setColorAt(i, new THREE.Color(colors[i]));
+      meshRef.current!.setColorAt(i, colorObj.set(colors[i]));
     });
     
     meshRef.current.instanceMatrix.needsUpdate = true;
@@ -167,7 +178,7 @@ function FloatingCross() {
   );
 }
 
-// Floating hearts - simplified
+// Floating hearts — fewer on mobile
 function FloatingHearts() {
   const heartShape = useMemo(() => {
     const shape = new THREE.Shape();
@@ -190,11 +201,9 @@ function FloatingHearts() {
     bevelSegments: 2
   }), []);
 
-  const positions: [number, number, number][] = [
-    [-6, 1.5, -5],
-    [6, -0.5, -6],
-    [3.5, 4, -8],
-  ];
+  const positions: [number, number, number][] = isMobile
+    ? [[-5, 1, -6], [5, -0.5, -7]]
+    : [[-6, 1.5, -5], [6, -0.5, -6], [3.5, 4, -8]];
 
   return (
     <>
@@ -216,25 +225,20 @@ function FloatingHearts() {
   );
 }
 
-// Loading fallback
-function SceneFallback() {
-  return null;
-}
-
 export default function Scene() {
   return (
-    <div className="absolute inset-0 z-[1] pointer-events-none">
+    <div className="absolute inset-0 z-[1] pointer-events-none" aria-hidden="true">
       <Canvas 
         camera={{ position: [0, 0, 10], fov: 50 }}
-        dpr={[1, 1.5]} // Limit pixel ratio for performance
+        dpr={isMobile ? [1, 1] : [1, 1.5]}
         performance={{ min: 0.5 }}
       >
-        <Suspense fallback={<SceneFallback />}>
+        <Suspense fallback={null}>
           {/* Lighting */}
           <ambientLight intensity={0.7} color="#ffffff" />
           <directionalLight position={[8, 8, 5]} intensity={1.2} color="#ffffff" />
           <pointLight position={[-8, 4, 4]} intensity={0.6} color="#93c5fd" />
-          <pointLight position={[8, -4, 4]} intensity={0.4} color="#fcd34d" />
+          {!isMobile && <pointLight position={[8, -4, 4]} intensity={0.4} color="#fcd34d" />}
           
           {/* 3D Elements */}
           <BalloonCluster />
@@ -243,23 +247,25 @@ export default function Scene() {
           <FloatingCross />
           <FloatingHearts />
           
-          {/* Sparkles - more subtle */}
+          {/* Sparkles */}
           <Sparkles 
-            count={60} 
+            count={isMobile ? 30 : 60} 
             scale={22} 
             size={2} 
             speed={0.25} 
             opacity={0.3} 
             color="#93c5fd" 
           />
-          <Sparkles 
-            count={20} 
-            scale={18} 
-            size={3} 
-            speed={0.15} 
-            opacity={0.25} 
-            color="#fcd34d" 
-          />
+          {!isMobile && (
+            <Sparkles 
+              count={20} 
+              scale={18} 
+              size={3} 
+              speed={0.15} 
+              opacity={0.25} 
+              color="#fcd34d" 
+            />
+          )}
         </Suspense>
       </Canvas>
     </div>

@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
-import Scene from './Scene';
+import { lazy, Suspense } from 'react';
 import { Locale, t } from '../i18n';
+
+const Scene = lazy(() => import('./Scene'));
 
 interface HeroProps {
   onConfirm: () => void;
@@ -19,19 +21,24 @@ export default function Hero({ onConfirm, isAuthenticated, locale }: HeroProps) 
   }, []);
 
   return (
-    <section className="relative h-screen w-full">
-      {/* Background Image - tu invitación, ocupa toda la pantalla */}
+    <section className="relative h-screen w-full" aria-label={locale === 'ro' ? 'Invitație la botez' : 'Invitación al bautizo'}>
+      {/* Background Image */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <img 
           src={locale === 'ro' ? '/img/invRu.jpeg' : '/img/inv.jpeg'}
-          alt="Invitación Bautizo de Liam" 
+          alt={locale === 'ro' ? 'Invitație la Botezul lui Liam - Duminică 14 Iunie 2026' : 'Invitación al Bautizo de Liam - Domingo 14 de Junio de 2026'}
           className="w-full h-full object-cover"
           loading="eager"
+          fetchPriority="high"
         />
       </div>
 
-      {/* 3D Scene */}
-      {showScene && <Scene />}
+      {/* 3D Scene - decorative */}
+      {showScene && (
+        <Suspense fallback={null}>
+          <Scene />
+        </Suspense>
+      )}
 
       {/* Botón fijo en la parte inferior */}
       <div className="absolute bottom-8 left-0 right-0 z-20 px-4">
@@ -39,6 +46,7 @@ export default function Hero({ onConfirm, isAuthenticated, locale }: HeroProps) 
           <button
             onClick={onConfirm}
             disabled={isAuthenticated}
+            aria-disabled={isAuthenticated}
             className={`group w-full py-4 px-8 rounded-full font-bold text-lg transition-all duration-300 ${
               isAuthenticated
                 ? 'bg-green-500 text-white'
@@ -49,12 +57,12 @@ export default function Hero({ onConfirm, isAuthenticated, locale }: HeroProps) 
               {isAuthenticated ? (
                 <>
                   <span>{t(locale, 'alreadyConfirmed')}</span>
-                  <ChevronDown size={20} className="animate-bounce" />
+                  <ChevronDown size={20} className="animate-bounce" aria-hidden="true" />
                 </>
               ) : (
                 <>
                   <span>{t(locale, 'confirmAttendance')}</span>
-                  <ChevronDown size={20} className="group-hover:translate-y-1 transition-transform" />
+                  <ChevronDown size={20} className="group-hover:translate-y-1 transition-transform" aria-hidden="true" />
                 </>
               )}
             </span>

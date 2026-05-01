@@ -16,7 +16,6 @@ export default function App() {
 
   const handleConfirmAttendance = () => {
     setShowMenu(true);
-    // Smooth scroll with a slight delay for animation
     setTimeout(() => {
       menuSectionRef.current?.scrollIntoView({ 
         behavior: 'smooth',
@@ -27,13 +26,16 @@ export default function App() {
 
   const handleSuccess = (selection: any) => {
     setSubmittedSelection(selection);
-    // Scroll to top of summary
     setTimeout(() => {
       menuSectionRef.current?.scrollIntoView({ 
         behavior: 'smooth',
         block: 'start'
       });
     }, 100);
+  };
+
+  const handleReset = () => {
+    setSubmittedSelection(null);
   };
 
   return (
@@ -49,10 +51,11 @@ export default function App() {
         />
         
         {/* Menu Section */}
-        <div 
+        <section 
           ref={menuSectionRef}
           id="menu-section" 
           className="max-w-2xl mx-auto px-4 scroll-mt-24 relative z-10 bg-[#f0f7ff] py-8"
+          aria-label={locale === 'ro' ? 'Selectare meniu' : 'Selección de menú'}
         >
           <AnimatePresence mode="wait">
             {showMenu && (
@@ -63,24 +66,27 @@ export default function App() {
                 transition={{ duration: 0.5, ease: "easeOut" }}
               >
                 {submittedSelection ? (
-                  <SelectionSummary selection={submittedSelection} locale={locale} />
+                  <SelectionSummary 
+                    selection={submittedSelection} 
+                    locale={locale} 
+                    onReset={handleReset}
+                  />
                 ) : (
                   <MenuForm onSuccess={handleSuccess} locale={locale} />
                 )}
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
+        </section>
       </main>
 
       {/* Footer */}
       <footer className="relative py-12 md:py-16 border-t border-blue-100/50 overflow-hidden">
-        {/* Background decoration */}
-        <div className="absolute inset-0 bg-gradient-to-t from-blue-50/50 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-blue-50/50 to-transparent pointer-events-none" aria-hidden="true" />
         
         <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
           {/* Decorative element */}
-          <div className="flex items-center justify-center gap-3 mb-6">
+          <div className="flex items-center justify-center gap-3 mb-6" aria-hidden="true">
             <div className="w-12 h-px bg-gradient-to-r from-transparent to-blue-200" />
             <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
               <span className="text-lg">👼</span>
@@ -97,9 +103,9 @@ export default function App() {
           </p>
           
           <div className="flex items-center justify-center gap-2 text-blue-400 text-xs uppercase tracking-widest font-semibold mb-6">
-            <Heart size={10} fill="currentColor" />
+            <Heart size={10} fill="currentColor" aria-hidden="true" />
             <span>{t(locale, 'footerPromise')}</span>
-            <Heart size={10} fill="currentColor" />
+            <Heart size={10} fill="currentColor" aria-hidden="true" />
           </div>
           
           <p className="text-xs text-slate-400">
