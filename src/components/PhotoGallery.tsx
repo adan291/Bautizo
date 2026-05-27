@@ -24,15 +24,13 @@ export default function PhotoGallery({ locale }: PhotoGalleryProps) {
 
   const loadPhotos = async () => {
     try {
-      // Use Cloudinary client-side search via fetch from a list file
-      // We'll use the Admin API alternative: a pre-built list endpoint
       const res = await fetch(
         `https://res.cloudinary.com/${CLOUD_NAME}/image/list/${FOLDER}.json`
       );
       if (res.ok) {
         const data = await res.json();
         const urls = data.resources.map(
-          (r: { public_id: string; version: number }) =>
+          (r: { public_id: string }) =>
             `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/w_800,q_auto,f_auto/${r.public_id}`
         );
         setPhotos(urls.reverse());
@@ -55,6 +53,7 @@ export default function PhotoGallery({ locale }: PhotoGalleryProps) {
         formData.append('file', file);
         formData.append('upload_preset', UPLOAD_PRESET);
         formData.append('folder', FOLDER);
+        formData.append('tags', FOLDER);
 
         const res = await fetch(
           `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
