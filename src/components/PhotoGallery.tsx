@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Camera, Upload, X, Loader2, Image as ImageIcon } from 'lucide-react';
-import { storage } from '../firebase';
-import { ref, uploadBytes, listAll, getDownloadURL } from 'firebase/storage';
 import { Locale, t } from '../i18n';
+
+const CLOUD_NAME = 'dzirz4hyk';
+const UPLOAD_PRESET = 'liamBautizo';
+const FOLDER = 'bautizo';
 
 interface PhotoGalleryProps {
   locale: Locale;
@@ -16,54 +18,30 @@ export default function PhotoGallery({ locale }: PhotoGalleryProps) {
   const [loadingPhotos, setLoadingPhotos] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Load existing photos
   useEffect(() => {
     loadPhotos();
   }, []);
 
   const loadPhotos = async () => {
     try {
-      const listRef = ref(storage, 'bautizo-photos');
-      const result = await listAll(listRef);
-      const urls = await Promise.all(
-        result.items.map((item) => getDownloadURL(item))
+      // Use Cloudinary client-side search via fetch from a list file
+      // We'll use the Admin API alternative: a pre-built list endpoint
+      const res = await fetch(
+        `https://res.cloudinary.com/${CLOUD_NAME}/image/list/${FOLDER}.json`
       );
-      setPhotos(urls.reverse()); // newest first
+      if (res.ok) {
+        const data = await res.json();
+        const urls = data.resources.map(
+          (r: { public_id: string; version: number }) =>
+            `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/w_800,q_auto,f_auto/${r.public_id}`
+        );
+        setPhotos(urls.reverse());
+      }
     } catch (error) {
       console.error('Error loading photos:', error);
     } finally {
       setLoadingPhotos(false);
     }
-  };
-
-  const compressImage = (file: File): Promise<Blob> => {
-    return new Promise((resolve) => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d')!;
-      const img = new window.Image();
-      img.onload = () => {
-        const maxSize = 1200;
-        let { width, height } = img;
-        if (width > maxSize || height > maxSize) {
-          if (width > height) {
-            height = (height / width) * maxSize;
-            width = maxSize;
-          } else {
-            width = (width / height) * maxSize;
-            height = maxSize;
-          }
-        }
-        canvas.width = width;
-        canvas.height = height;
-        ctx.drawImage(img, 0, 0, width, height);
-        canvas.toBlob(
-          (blob) => resolve(blob!),
-          'image/jpeg',
-          0.8
-        );
-      };
-      img.src = URL.createObjectURL(file);
-    });
   };
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -73,11 +51,17 @@ export default function PhotoGallery({ locale }: PhotoGalleryProps) {
     setUploading(true);
     try {
       const uploadPromises = Array.from(files).map(async (file) => {
-        const compressed = await compressImage(file);
-        const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.jpg`;
-        const storageRef = ref(storage, `bautizo-photos/${fileName}`);
-        await uploadBytes(storageRef, compressed);
-        return getDownloadURL(storageRef);
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', UPLOAD_PRESET);
+        formData.append('folder', FOLDER);
+
+        const res = await fetch(
+          `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+          { method: 'POST', body: formData }
+        );
+        const data = await res.json();
+        return `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/w_800,q_auto,f_auto/${data.public_id}`;
       });
 
       const newUrls = await Promise.all(uploadPromises);
@@ -151,7 +135,7 @@ export default function PhotoGallery({ locale }: PhotoGalleryProps) {
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: i * 0.05 }}
-                  onClick={() => setLightboxUrl(url)}
+                  onClick={() => setLightboxUrl(url.replace('/w_800,', '/w_1600,'))}
                   className="aspect-square rounded-2xl overflow-hidden hover:scale-[1.03] transition-transform shadow-sm"
                 >
                   <img
