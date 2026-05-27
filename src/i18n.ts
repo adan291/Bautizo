@@ -43,6 +43,12 @@ export const translations = {
     galleryEmpty: 'Aún no hay fotos. ¡Sé el primero en subir!',
     galleryPhotoAlt: 'Foto del bautizo',
     galleryClose: 'Cerrar',
+    galleryBack: 'Volver',
+    galleryDragDrop: 'o arrastra tus fotos aquí',
+    galleryAddMore: 'Añadir',
+    galleryTapToSelect: 'Toca para elegir fotos de tu galería',
+    galleryPleaseWait: 'No cierres la app...',
+    gallerySwipe: 'Desliza para ver más',
 
     // Footer
     footerTitle: 'Bautizo de Liam',
@@ -92,6 +98,12 @@ export const translations = {
     galleryEmpty: 'Nu sunt fotografii încă. Fii primul care încarcă!',
     galleryPhotoAlt: 'Fotografie de la botez',
     galleryClose: 'Închide',
+    galleryBack: 'Înapoi',
+    galleryDragDrop: 'sau trage fotografiile aici',
+    galleryAddMore: 'Adaugă',
+    galleryTapToSelect: 'Atinge pentru a alege fotografii',
+    galleryPleaseWait: 'Nu închide aplicația...',
+    gallerySwipe: 'Glisează pentru mai multe',
 
     // Footer
     footerTitle: 'Botezul lui Liam',
