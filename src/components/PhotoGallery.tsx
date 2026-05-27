@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Camera, Upload, X, Loader2, Image as ImageIcon } from 'lucide-react';
+import { db } from '../firebase';
+import { collection, addDoc, query, orderBy, onSnapshot } from 'firebase/firestore';
 import { Locale, t } from '../i18n';
 
 const CLOUD_NAME = 'dzirz4hyk';
@@ -18,29 +20,18 @@ export default function PhotoGallery({ locale }: PhotoGalleryProps) {
   const [loadingPhotos, setLoadingPhotos] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Listen to Firestore for real-time photo updates
   useEffect(() => {
-    loadPhotos();
-  }, []);
-
-  const loadPhotos = async () => {
-    try {
-      const res = await fetch(
-        `https://res.cloudinary.com/${CLOUD_NAME}/image/list/${FOLDER}.json`
-      );
-      if (res.ok) {
-        const data = await res.json();
-        const urls = data.resources.map(
-          (r: { public_id: string }) =>
-            `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/w_800,q_auto,f_auto/${r.public_id}`
-        );
-        setPhotos(urls.reverse());
-      }
-    } catch (error) {
-      console.error('Error loading photos:', error);
-    } finally {
+    const q = query(collection(db, 'photos'), orderBy('createdAt', 'desc'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const urls = snapshot.docs.map((doc) => doc.data().url as string);
+      setPhotos(urls);
       setLoadingPhotos(false);
-    }
-  };
+    }, () => {
+      setLoadingPhotos(false);
+    });
+    return () => unsubscribe();
+  }, []);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -53,18 +44,25 @@ export default function PhotoGallery({ locale }: PhotoGalleryProps) {
         formData.append('file', file);
         formData.append('upload_preset', UPLOAD_PRESET);
         formData.append('folder', FOLDER);
-        formData.append('tags', FOLDER);
 
         const res = await fetch(
           `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
           { method: 'POST', body: formData }
         );
         const data = await res.json();
-        return `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/w_800,q_auto,f_auto/${data.public_id}`;
+        const url = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/w_800,q_auto,f_auto/${data.public_id}`;
+
+        // Save URL to Firestore
+        await addDoc(collection(db, 'photos'), {
+          url,
+          publicId: data.public_id,
+          createdAt: new Date()
+        });
+
+        return url;
       });
 
-      const newUrls = await Promise.all(uploadPromises);
-      setPhotos((prev) => [...newUrls, ...prev]);
+      await Promise.all(uploadPromises);
     } catch (error) {
       console.error('Error uploading:', error);
     } finally {
