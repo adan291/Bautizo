@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import MenuForm from './components/MenuForm';
 import SelectionSummary from './components/SelectionSummary';
+import PhotoGallery from './components/PhotoGallery';
 import LanguageSelector from './components/LanguageSelector';
 import { Heart } from 'lucide-react';
 import { Locale, t } from './i18n';
@@ -78,6 +79,9 @@ export default function App() {
             )}
           </AnimatePresence>
         </section>
+
+        {/* Photo Gallery */}
+        <PhotoGallery locale={locale} />
       </main>
 
       {/* Footer */}

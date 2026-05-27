@@ -35,6 +35,15 @@ export const translations = {
     summarySeeYou: 'Nos vemos pronto',
     summaryChangeSelection: 'Cambiar selección',
     
+    // Gallery
+    galleryTitle: 'Fotos del Bautizo',
+    gallerySubtitle: 'Comparte tus fotos del día',
+    galleryUploadBtn: 'Subir Fotos',
+    galleryUploading: 'Subiendo...',
+    galleryEmpty: 'Aún no hay fotos. ¡Sé el primero en subir!',
+    galleryPhotoAlt: 'Foto del bautizo',
+    galleryClose: 'Cerrar',
+
     // Footer
     footerTitle: 'Bautizo de Liam',
     footerDate: '14 de Junio de 2026 · Parroquia El Salvador',
@@ -75,6 +84,15 @@ export const translations = {
     summarySeeYou: 'Ne vedem curând',
     summaryChangeSelection: 'Schimbă selecția',
     
+    // Gallery
+    galleryTitle: 'Fotografii de la Botez',
+    gallerySubtitle: 'Împărtășește fotografiile tale din ziua aceea',
+    galleryUploadBtn: 'Încarcă Fotografii',
+    galleryUploading: 'Se încarcă...',
+    galleryEmpty: 'Nu sunt fotografii încă. Fii primul care încarcă!',
+    galleryPhotoAlt: 'Fotografie de la botez',
+    galleryClose: 'Închide',
+
     // Footer
     footerTitle: 'Botezul lui Liam',
     footerDate: '14 Iunie 2026 · Parroquia El Salvador',
